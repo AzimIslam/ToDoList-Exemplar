@@ -24,3 +24,19 @@ def addTask(request):
     # If request is not POST, return error
     else:
         return JsonResponse({'error': 'Invalid request method.'})
+
+
+def getAllTasks(request):
+    # Check if request is GET
+    if request.method == 'GET':
+        # Get all ListEntry objects
+        entries = ListEntry.objects.all()
+
+        # Convert entries to JSON
+        entries_json = [entry.to_dict() for entry in entries]
+
+        # Return entries as JSON
+        return JsonResponse(entries_json, safe=False)
+    # If request is not GET, return error
+    else:
+        return JsonResponse({'error': 'Invalid request method.'})
