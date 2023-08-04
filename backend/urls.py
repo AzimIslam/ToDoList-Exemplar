@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import *
+from . import views
 
 
-urlspatterns = [
-    path('addTask', addTask),
+urlpatterns = [
+    path('addTask/', views.addTask),
 ]
