@@ -16,6 +16,27 @@ function ToDoList() {
         setShowForm(false);
     }
 
+    const createTask = async() => {
+        await fetch('http://localhost:8000/api/addTask/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                description: newTask,
+                date: newDate,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                disableForm();
+            } else {
+                alert('Error creating task');
+            }
+        })
+    }
+
     return (
         <div className="container">
             <table class="table table-striped">
@@ -28,19 +49,17 @@ function ToDoList() {
                         </th>
                     </tr>
                 </thead>
-                <ListEntry id={1} task="Task 1" date="2021-10-01" />
-                <ListEntry id={2} task="Task 1" date="2021-10-01" />
                 <tbody>
                     { showForm ?
                     <tr>
                         <td>
-                            <input type="text" value={newTask} class="form-control" placeholder="Task" />
+                            <input type="text" value={newTask} class="form-control" placeholder="Task" onChange={(e) => setNewTask(e.target.value)} />
                         </td>
                         <td>
-                            <input type="date" value={newDate} class="form-control" placeholder="Due date" />
+                            <input type="date" value={newDate} class="form-control" placeholder="Due date" onChange={(e) => setNewDate(e.target.value)}/>
                         </td>
                         <td colSpan={1}> 
-                            <button type="button" class="btn btn-success">Create</button>
+                            <button type="button" class="btn btn-success" onClick={createTask}>Create</button>
                         </td>
                     </tr> : null
                     }

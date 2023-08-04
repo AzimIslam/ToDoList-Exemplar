@@ -1,15 +1,18 @@
 from django.http import JsonResponse
 from .models import ListEntry
 
+import json
+
 
 # Create your views here.
 def addTask(request):
     # Check if request is POST
     if request.method == 'POST':
+        data = json.loads(request.body)
 
         # Get data from the request
-        description = request.POST.get('description')
-        due_date = request.POST.get('due_date')
+        description = data.get('description')
+        due_date = data.get('date')
 
         # Create a new ListEntry object
         new_entry = ListEntry(description=description, due=due_date)
