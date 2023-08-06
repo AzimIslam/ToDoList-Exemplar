@@ -56,3 +56,26 @@ def deleteTask(request, id):
     # If request is not DELETE, return error
     else:
         return JsonResponse({'error': 'Invalid request method.'})
+    
+def updateTask(request, id):
+    # Check if request is PUT
+    if request.method == 'PUT':
+        # Get ListEntry object with id
+        entry = ListEntry.objects.get(id=id)
+
+        # Get data from the request
+        data = json.loads(request.body)
+        description = data.get('description')
+        due_date = data.get('date')
+
+        # Update entry
+        entry.description = description
+        entry.due = due_date
+        entry.save()
+
+        # Return updated entry as JSON
+        return JsonResponse(entry.to_dict())
+    
+    # If request is not PUT, return error
+    else:
+        return JsonResponse({'error': 'Invalid request method.'})

@@ -81,6 +81,36 @@ function ToDoList() {
         })
     }
 
+    const editTask = async(id, newTask, newDate) => {
+        await fetch(`http://localhost:8000/api/editTask/${id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                description: newTask,
+                date: newDate,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                setTasks(tasks.map(task => {
+                    if (task.id === id) {
+                        task.description = newTask;
+                        task.date = newDate;
+                    }
+                    return task;
+                }));
+                return true;
+            } else {
+                alert('Error editing task');
+                return false;
+            }
+        })
+    }
+    
+
     return (
         <div className="container">
             <table class="table table-striped">
@@ -95,7 +125,7 @@ function ToDoList() {
                 </thead>
                 <tbody>
                     { tasks.map((task) => {
-                        return <ListEntry id={task.id} task={task.description} date={task.due} deleteTask={deleteTask} />
+                        return <ListEntry id={task.id} task={task.description} date={task.due} deleteTask={deleteTask} editTask={editTask}/>
                     }) }
                     { showForm ?
                     <tr>
