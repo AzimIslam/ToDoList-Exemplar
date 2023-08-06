@@ -40,3 +40,19 @@ def getAllTasks(request):
     # If request is not GET, return error
     else:
         return JsonResponse({'error': 'Invalid request method.'})
+    
+def deleteTask(request, id):
+    # Check if request is DELETE
+    if request.method == 'DELETE':
+        # Get ListEntry object with id
+        entry = ListEntry.objects.get(id=id)
+
+        # Delete entry
+        entry.delete()
+
+        # Return success message
+        return JsonResponse({'success': True})
+    
+    # If request is not DELETE, return error
+    else:
+        return JsonResponse({'error': 'Invalid request method.'})

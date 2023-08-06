@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ListEntry from '../ListEntry/ListEntry';
 
 function ToDoList() {
@@ -8,12 +8,37 @@ function ToDoList() {
     const [newTask, setNewTask] = useState('');
     const [newDate, setNewDate] = useState();
 
+    const [tasks, setTasks] = useState([]);
+
+
+    const resetForm = () => {
+        setNewTask('');
+        setNewDate('');
+    }
+
     const enableForm = () => {
         setShowForm(true);
     }
 
     const disableForm = () => {
         setShowForm(false);
+    }
+
+    useEffect(() => {
+        getTasks();
+    }, []);
+
+    const getTasks = async() => {
+        await fetch('http://localhost:8000/api/getAllTasks/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setTasks(data);
+        })
     }
 
     const createTask = async() => {
@@ -31,8 +56,27 @@ function ToDoList() {
         .then(data => {
             if (data.id) {
                 disableForm();
+                resetForm();
+                tasks.push(data);
             } else {
                 alert('Error creating task');
+            }
+        })
+    }
+
+    const deleteTask = async(id) => {
+        await fetch(`http://localhost:8000/api/deleteTask/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                setTasks(tasks.filter(task => task.id !== id));
+            } else {
+                alert('Error deleting task');
             }
         })
     }
@@ -50,6 +94,9 @@ function ToDoList() {
                     </tr>
                 </thead>
                 <tbody>
+                    { tasks.map((task) => {
+                        return <ListEntry id={task.id} task={task.description} date={task.due} deleteTask={deleteTask} />
+                    }) }
                     { showForm ?
                     <tr>
                         <td>
